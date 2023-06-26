@@ -74,6 +74,20 @@ app.post("/update", async (req, res) => {
   
 });
 
+app.post("/validate", async (req, res) => {
+  try {
+    const { username, password } = req.body;
+    if (username === "admin" && password === "password") {
+      return res.send({ authenticated: true, message: "Login successful" });
+    } else {
+      return res.send({ authenticated: false, message: "Invalid credentials" });
+    }
+  } catch (error) {
+    console.log(error);
+    return res.send(error);
+  }
+});
+
 app.post("/delete", async (req, res) => {
 
   try {
