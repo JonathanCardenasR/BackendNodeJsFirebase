@@ -7,8 +7,11 @@ const port  = process.env.PORT || 4000;
 
 
 const logRequestStart = (req, res, next) => {
+  
+  const fecha = new Date
+  
   res.on('finish', () => {
-      console.info(`${req.method} ${req.originalUrl} | STATUS: ${res.statusCode} ${res.statusMessage}`)
+      console.info(`${req.method} ${req.originalUrl} | STATUS: ${res.statusCode} ${res.statusMessage}   | TIME: ${fecha}`)
   })
   
   next()
