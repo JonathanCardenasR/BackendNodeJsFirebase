@@ -5,6 +5,17 @@ const app = express();
 
 const port  = process.env.PORT || 4000;
 
+
+const logRequestStart = (req, res, next) => {
+  res.on('finish', () => {
+      console.info(`${req.method} ${req.originalUrl} | STATUS: ${res.statusCode} ${res.statusMessage}`)
+  })
+  
+  next()
+}
+
+app.use(logRequestStart);
+
 app.use(express.json());
 app.use(cors());
 
