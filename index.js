@@ -11,6 +11,10 @@ app.get("/", async (req, res) => {
   res.send(list);
 });
 
+app.get("/health", async (req, res) => {
+  res.send('Todo ok');
+});
+
 app.post("/create", async (req, res) => {
   const data = req.body;
   await User.add({ data });
@@ -30,4 +34,5 @@ app.post("/delete", async (req, res) => {
   await User.doc(id).delete();
   res.send({ msg: "Deleted" });
 });
+
 app.listen(4000, () => console.log("Up & RUnning *4000"));
