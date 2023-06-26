@@ -2,10 +2,13 @@ const express = require("express");
 const cors = require("cors");
 const User = require("./config");
 const app = express();
+
+const port  = process.env.PORT || 4000;
+
 app.use(express.json());
 app.use(cors());
 
-app.get("/", async (req, res) => {
+app.get("/get", async (req, res) => {
   const snapshot = await User.get();
   const list = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
   res.send(list);
@@ -35,4 +38,4 @@ app.post("/delete", async (req, res) => {
   res.send({ msg: "Deleted" });
 });
 
-app.listen(4000, () => console.log("Up & RUnning *4000"));
+app.listen(port, () => console.log("Up & RUnning " + port));
