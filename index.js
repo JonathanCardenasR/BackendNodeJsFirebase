@@ -25,14 +25,12 @@ app.use(cors());
 app.get("/get", async (req, res) => {
 
   try {
-
     const snapshot = await User.get();
     const list = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
     return res.send(list);
-    
   } catch (error) {
     console.log(error);
-    return res.send(error);
+    return res.send({ msg: "User error" });
   }
   
 });
@@ -44,14 +42,11 @@ app.get("/health", async (req, res) => {
 app.post("/create", async (req, res) => {
 
   try {
-
     const data = req.body;
     await User.add({ data });
     return res.send({ msg: "User Added" });
-      
   } catch (error) {
-    console.log(error);
-    return res.send(error); 
+    return res.send({ msg: "User error" }); 
   }
   
 });
@@ -59,6 +54,15 @@ app.post("/create", async (req, res) => {
 app.post("/update", async (req, res) => {
 
   try {
+
+    const snapshot = await User.get();
+    const list = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+
+    for(const user of list){
+      if(user.username == req.body.username){
+        return res.send({ msg: "Username already exists" });
+      }
+    }
 
     const id = req.body.id;
     delete req.body.id;
@@ -68,7 +72,7 @@ app.post("/update", async (req, res) => {
     
   } catch (error) {
     console.log(error);
-    return res.send(error);
+    return res.send({ msg: "Updated error" });
   }
 
   
@@ -77,14 +81,26 @@ app.post("/update", async (req, res) => {
 app.post("/validate", async (req, res) => {
   try {
     const { username, password } = req.body;
-    if (username === "admin" && password === "password") {
-      return res.send({ authenticated: true, message: "Login successful" });
-    } else {
-      return res.send({ authenticated: false, message: "Invalid credentials" });
+
+    const snapshot = await User.get();
+    const list = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+
+    for(const user of list){
+      console.log(user);
+      console.log(username, password );
+      if(user.data.username == username && 
+        user.data.password == password && 
+        user.data.username != undefined && 
+        user.data.password != undefined){
+        return res.send({ authenticated: true, message: "Login successful" });
+      }
     }
+
+    return res.send({ authenticated: false, message: "Invalid credentials" });
+    
   } catch (error) {
     console.log(error);
-    return res.send(error);
+    return res.send({ messagg: "Login error" });
   }
 });
 
@@ -96,9 +112,9 @@ app.post("/delete", async (req, res) => {
     return res.send({ msg: "Deleted" });
   } catch (error) {
     console.log(error);
-    return res.send(error);
+    return res.send({ msg: "Deleted error" });
   }
 
 });
 
-app.listen(port, () => console.log("Up & RUnning " + port));
+app.listen(port, () => console.log("Up & Running " + port));
