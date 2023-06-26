@@ -11,7 +11,7 @@ const logRequestStart = (req, res, next) => {
   const fecha = new Date
   
   res.on('finish', () => {
-      console.info(`${req.method} ${req.originalUrl} | STATUS: ${res.statusCode} ${res.statusMessage}   | TIME: ${fecha}`)
+      console.info(`${req.method} ${req.originalUrl} | STATUS: ${res.statusCode} ${res.statusMessage} | TIME: ${fecha}`)
   })
   
   next()
