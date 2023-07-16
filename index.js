@@ -50,18 +50,20 @@ app.post("/create", async (req, res) => {
   }
   
 });
+
 //Se cambio el metodo update porque no funcionaba (hasta ahora tampoco funciona)
 app.post("/update", async (req, res) => {
   try {
     const snapshot = await User.get();
     const list = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+    const username = req.body.username;
+    const newPassword = req.body.password;
 
-    const username = req.body.username; 
 
     for (const user of list) {
-      if (user.username == username) {
+      if (user.data.username == username) {
         const id = user.id;
-        await User.doc(id).update({ password: req.body.password });
+        await User.doc(id).update({ password: newPassword });
         return res.send({ msg: "Password updated" });
       }
     }
@@ -72,8 +74,6 @@ app.post("/update", async (req, res) => {
     return res.send({ msg: "Update error" });
   }
 });
-
-
 
 
 app.post("/validate", async (req, res) => {
