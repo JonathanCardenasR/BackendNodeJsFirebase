@@ -87,24 +87,22 @@ app.post("/validate", async (req, res) => {
     const snapshot = await User.get();
     const list = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
 
-    for(const user of list){
-      console.log(user);
-      console.log(username, password );
-      if(user.data.username == username && 
-        user.data.password == password && 
-        user.data.username != undefined && 
-        user.data.password != undefined){
-        return res.send({ authenticated: true, message: "Login successful" });
+    for (const user of list) {
+      if (user.username == username && user.password == password) {
+        return res.status(200).send({ authenticated: true, message: "Login successful" });
       }
     }
 
-    return res.send({ authenticated: false, message: "Invalid credentials" });
-    
+    return res.status(404).send({ authenticated: false, message: "Invalid credentials" });
+
   } catch (error) {
     console.log(error);
-    return res.send({ messagg: "Login error" });
+    return res.status(500).send({ message: "Login error" });
   }
 });
+
+
+
 
 app.post("/delete", async (req, res) => {
 
