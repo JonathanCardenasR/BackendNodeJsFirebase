@@ -51,19 +51,20 @@ app.post("/create", async (req, res) => {
   
 });
 
-
-
+//Cuando uso la api, me crea otro campo llamado password, pero no me actualiza el campo
 app.post("/update", async (req, res) => {
   try {
     const snapshot = await User.get();
     const list = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
     const username = req.body.username;
     const newPassword = req.body.password;
+    console.log(username)
+
 
     for (const user of list) {
       if (user.username === username) {
         const id = user.id;
-        await User.doc(id).update({ password: newPassword });
+        await User.doc(id).update({ "data.password": newPassword });
         return res.send({ msg: "Password updated" });
       }
     }
@@ -78,8 +79,6 @@ app.post("/update", async (req, res) => {
 
 
 
-
-
 app.post("/validate", async (req, res) => {
   try {
     const { username, password } = req.body;
@@ -87,22 +86,51 @@ app.post("/validate", async (req, res) => {
     const snapshot = await User.get();
     const list = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
 
-    for (const user of list) {
-      if (user.username == username && user.password == password) {
-        return res.status(200).send({ authenticated: true, message: "Login successful" });
+    for(const user of list){
+      console.log(user);
+      console.log(username, password );
+      if(user.data.username == username && 
+        user.data.password == password && 
+        user.data.username != undefined && 
+        user.data.password != undefined){
+        return res.send({ authenticated: true, message: "Login successful" });
       }
     }
 
-    return res.status(404).send({ authenticated: false, message: "Invalid credentials" });
-
+    return res.send({ authenticated: false, message: "Invalid credentials" });
+    
   } catch (error) {
     console.log(error);
-    return res.status(500).send({ message: "Login error" });
+    return res.send({ messagg: "Login error" });
   }
 });
 
+app.post("/recoverpassword", async (req, res) => {
+  try {
+    const { username } = req.body;
+
+    const snapshot = await User.get();
+    const list = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+    console.log("usuario buscado : " + username);
+
+    for(const user of list){
+;
+      if(user.username == username &&
+          user.username !== undefined 
+        ){
+        return res.send({ password: user.password});
+      }
+      else{
+        return res.send({ message: "Usuario no encontrado"});
+      }
+    }
 
 
+  } catch (error) {
+    console.log(error);
+    return res.send({ messagg: "Error inesperado en el servidor" });
+  }
+});
 
 app.post("/delete", async (req, res) => {
 
