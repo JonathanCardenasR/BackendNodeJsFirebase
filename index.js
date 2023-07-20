@@ -89,10 +89,10 @@ app.post("/validate", async (req, res) => {
     for(const user of list){
       console.log(user);
       console.log(username, password );
-      if(user.data.username == username && 
-        user.data.password == password && 
-        user.data.username != undefined && 
-        user.data.password != undefined){
+      if(user.username == username && 
+        user.password == password && 
+        user.username != undefined && 
+        user.password != undefined){
         return res.send({ authenticated: true, message: "Login successful" });
       }
     }
@@ -105,6 +105,7 @@ app.post("/validate", async (req, res) => {
   }
 });
 
+
 app.post("/recoverpassword", async (req, res) => {
   try {
     const { username } = req.body;
@@ -114,7 +115,6 @@ app.post("/recoverpassword", async (req, res) => {
     console.log("usuario buscado : " + username);
 
     for(const user of list){
-;
       if(user.username == username &&
           user.username !== undefined 
         ){
